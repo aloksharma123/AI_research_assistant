@@ -3,7 +3,7 @@ from langchain_chroma import Chroma
 
 class ChromaManager:
     """
-    Handles all ChromaDB operations.
+    Handles Chroma vector database.
     """
 
     def __init__(self, embedding_model):
@@ -11,11 +11,18 @@ class ChromaManager:
         self.db = Chroma(
             collection_name="research_documents",
             embedding_function=embedding_model,
-            persist_directory="vectorstore",
+            persist_directory="vectorstore"
         )
 
+
     def add_documents(self, documents):
+
         self.db.add_documents(documents)
 
-    def similarity_search(self, query, k=4):
-        return self.db.similarity_search(query, k=k)
+
+    def search(self, query, k=3):
+
+        return self.db.similarity_search(
+            query,
+            k=k
+        )
