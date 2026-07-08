@@ -1,8 +1,30 @@
-
+# Virtual Environment
 .venv/
+
+# Python
 __pycache__/
 *.pyc
+*.pyo
+
+# Environment Variables
 .env
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Chroma Database
 vectorstore/
+
+# Uploaded Files
+data/uploads/
+
+# Logs
 logs/
-.streamlit/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
