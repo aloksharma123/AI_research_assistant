@@ -4,6 +4,7 @@ from langchain_core.runnables import RunnablePassthrough
 
 class RAGChain:
 
+
     def __init__(
         self,
         llm,
@@ -15,17 +16,21 @@ class RAGChain:
             """
 You are an AI research assistant.
 
-Answer the user's question using only the provided document context.
+Answer the user's question using the document context.
 
-If the information is not available in the document,
-say:
-"I could not find this information in the uploaded document."
+Rules:
+- Use only the information present in the context.
+- If the answer is available, provide a detailed explanation.
+- If the information is missing, clearly say:
+  "I could not find this information in the uploaded document."
 
-Context:
+Document Context:
 {context}
 
-Question:
+
+User Question:
 {question}
+
 
 Answer:
 """
@@ -38,10 +43,17 @@ Answer:
                 question
             )
 
-            return "\n\n".join(
-                doc.page_content
-                for doc in docs
-            )
+            context = ""
+
+            for doc in docs:
+
+                context += (
+                    "\n\n"
+                    + doc.page_content
+                )
+
+            return context
+
 
 
         self.chain = (
@@ -49,8 +61,10 @@ Answer:
                 "context": retrieve_context,
                 "question": RunnablePassthrough()
             }
-            | prompt
-            | llm
+            |
+            prompt
+            |
+            llm
         )
 
 

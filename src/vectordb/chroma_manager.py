@@ -8,16 +8,26 @@ class ChromaManager:
 
     def __init__(self, embedding_model):
 
+        self.embedding_model = embedding_model
+
         self.db = Chroma(
             collection_name="research_documents",
-            embedding_function=embedding_model,
+            embedding_function=self.embedding_model,
             persist_directory="vectorstore"
         )
 
 
     def add_documents(self, documents):
 
-        self.db.add_documents(documents)
+        # Add new documents
+        self.db.add_documents(
+            documents
+        )
+
+        print(
+            "Total documents:",
+            self.db._collection.count()
+        )
 
 
     def search(self, query, k=3):

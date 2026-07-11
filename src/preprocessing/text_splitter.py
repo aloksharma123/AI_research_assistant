@@ -1,29 +1,32 @@
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_core.documents import Document
 
 
 class TextChunker:
     """
-    Splits document text into LangChain Document chunks.
+    Splits document text into meaningful chunks for RAG.
     """
 
-    def __init__(
-        self,
-        chunk_size: int = 1000,
-        chunk_overlap: int = 200,
-    ):
+    def __init__(self):
+
         self.splitter = RecursiveCharacterTextSplitter(
-            chunk_size=chunk_size,
-            chunk_overlap=chunk_overlap,
+            chunk_size=2000,
+            chunk_overlap=400,
+            length_function=len,
+            separators=[
+                "\n\n",
+                "\n",
+                ". ",
+                " ",
+                ""
+            ]
         )
 
-    def split(self, text: str, metadata: dict):
 
-        documents = [
-            Document(
-                page_content=text,
-                metadata=metadata,
-            )
-        ]
+    def split(self, text, metadata):
 
-        return self.splitter.split_documents(documents)
+        chunks = self.splitter.create_documents(
+            [text],
+            metadatas=[metadata]
+        )
+
+        return chunks

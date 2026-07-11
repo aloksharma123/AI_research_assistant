@@ -10,7 +10,7 @@ from src.retriever.retriever import Retriever
 class DocumentService:
     """
     Handles complete document ingestion pipeline:
-    
+
     PDF
     ↓
     Text Extraction
@@ -41,7 +41,6 @@ class DocumentService:
         file_path = save_uploaded_file(
             uploaded_file
         )
-
 
         # Load PDF text
         loader = PDFLoader(
