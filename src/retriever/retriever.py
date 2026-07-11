@@ -1,19 +1,15 @@
 class Retriever:
     """
-    Retrieves relevant document chunks from vector database.
+    Retrieves relevant document chunks.
     """
 
+    def __init__(self, db):
 
-    def __init__(self, vector_db):
-
-        self.vector_db = vector_db
-
+        self.db = db
 
     def retrieve(self, query, k=8):
 
-        documents = self.vector_db.search(
+        return self.db.similarity_search(
             query,
             k=k
         )
-
-        return documents

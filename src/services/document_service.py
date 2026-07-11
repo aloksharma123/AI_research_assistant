@@ -9,18 +9,18 @@ from src.retriever.retriever import Retriever
 
 class DocumentService:
     """
-    Handles complete document ingestion pipeline:
+    Handles complete document ingestion pipeline.
 
-    PDF
-    ↓
+    PDFs
+      ↓
     Text Extraction
-    ↓
+      ↓
     Chunking
-    ↓
+      ↓
     Embeddings
-    ↓
+      ↓
     Chroma Vector Database
-    ↓
+      ↓
     Retriever
     """
 
@@ -34,45 +34,44 @@ class DocumentService:
             self.embedding_model
         )
 
+    def process(self, uploaded_files):
 
-    def process(self, uploaded_file):
+        all_chunks = []
+        metadata = []
 
-        # Save PDF
-        file_path = save_uploaded_file(
-            uploaded_file
+        for uploaded_file in uploaded_files:
+
+            file_path = save_uploaded_file(
+                uploaded_file
+            )
+
+            loader = PDFLoader(
+                file_path
+            )
+
+            document = loader.load()
+
+            chunks = self.chunker.split(
+                document["text"],
+                document["metadata"]
+            )
+
+            all_chunks.extend(chunks)
+
+            metadata.append(
+                document["metadata"]
+            )
+
+        db = self.vector_db.create_database(
+            all_chunks
         )
 
-        # Load PDF text
-        loader = PDFLoader(
-            file_path
-        )
-
-        document = loader.load()
-
-
-        # Split into chunks
-        chunks = self.chunker.split(
-            document["text"],
-            document["metadata"]
-        )
-
-
-        # Store chunks in Chroma
-        self.vector_db.add_documents(
-            chunks
-        )
-
-
-        # Create retriever
         retriever = Retriever(
-            self.vector_db
+            db
         )
 
-
-        # Attach results
-        document["chunks"] = chunks
-
-        document["retriever"] = retriever
-
-
-        return document
+        return {
+            "retriever": retriever,
+            "metadata": metadata,
+            "chunks": all_chunks
+        }
